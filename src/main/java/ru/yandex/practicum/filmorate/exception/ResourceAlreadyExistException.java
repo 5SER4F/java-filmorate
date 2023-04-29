@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.exception;
 
-public class ResourceAlreadyExistException extends RuntimeException{
+public class ResourceAlreadyExistException extends RuntimeException {
     public ResourceAlreadyExistException() {
     }
 
