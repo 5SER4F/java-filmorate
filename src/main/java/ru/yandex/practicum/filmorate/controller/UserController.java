@@ -58,7 +58,7 @@ public class UserController {
             failedValidation("Некорректная дата рождения");
     }
 
-    private void put(User user){
+    private void put(User user) {
         users.put(user.getId(), user);
     }
 
