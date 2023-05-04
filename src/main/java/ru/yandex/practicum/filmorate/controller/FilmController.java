@@ -8,9 +8,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/films")
@@ -27,10 +28,10 @@ public class FilmController {
         }
         validation(film);
         if (film.getId() == 0)
-            film.setId(++idCounter);
+            film.setId(getNewId());
         log.debug("Создан фильм с id {}", film.getId());
         put(film);
-        return film;
+        return films.get(film.getId());
     }
 
     @PutMapping
@@ -39,21 +40,20 @@ public class FilmController {
         if (film.getId() != 0 && !films.containsKey(film.getId()))
             throw new ResourceAlreadyExistException("Попытка обновить несуществующий фильм");
         if (film.getId() == 0)
-            film.setId(++idCounter);
+            film.setId(getNewId());
         log.debug("Добавлен фильм с id {}", film.getId());
         put(film);
         return film;
     }
 
     @GetMapping
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         log.debug("Общее количество фильмов {}", films.size());
-        return films.values();
+        return films.values().stream()
+                .collect(Collectors.toList());
     }
 
     private void validation(Film film) {
-        if (film.getDescription().length() > 200)
-            failedValidation("Максимальная длина описания — 200 символов");
         if (film.getReleaseDate().isBefore(Film.EARLIEST_DATE))
             failedValidation("Дата релиза — не раньше 28 декабря 1895");
         if (film.getDuration() <= 0)
@@ -67,5 +67,9 @@ public class FilmController {
     private void failedValidation(String message) {
         log.debug(message);
         throw new ValidationException(message);
+    }
+
+    private static int getNewId() {
+        return ++idCounter;
     }
 }

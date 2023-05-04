@@ -8,9 +8,10 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -27,7 +28,7 @@ public class UserController {
         }
         validation(user);
         if (user.getId() == 0)
-            user.setId(++idCounter);
+            user.setId(getNewId());
         log.debug("Создан пользователь с id {}", user.getId());
         put(user);
         return user;
@@ -39,16 +40,17 @@ public class UserController {
         if (user.getId() != 0 && !users.containsKey(user.getId()))
             throw new ResourceAlreadyExistException("Попытка обновить несуществующего пользователя");
         if (user.getId() == 0)
-            user.setId(++idCounter);
+            user.setId(getNewId());
         log.debug("Добавлен пользователь с id {}", user.getId());
         put(user);
-        return user;
+        return users.get(user.getId());
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    public List<User> findAll() {
         log.debug("Общее количество пользователей {}", users.size());
-        return users.values();
+        return users.values().stream()
+                .collect(Collectors.toList());
     }
 
     private void validation(User user) {
@@ -65,5 +67,9 @@ public class UserController {
     private void failedValidation(String message) {
         log.debug(message);
         throw new ValidationException(message);
+    }
+
+    private static int getNewId() {
+        return ++idCounter;
     }
 }
