@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
 public interface AbstractStorage<T> {
-    T create(T T);
+    T create(T data);
 
-    T remove(T T);
+    T remove(T data);
 
-    T put(T T);
+    T put(T data);
 
     T get(long id);
 }
