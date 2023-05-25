@@ -6,7 +6,10 @@ import ru.yandex.practicum.filmorate.exception.ResourceAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.ResourceNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,13 +47,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> findAllFriends(Collection<Long> ids) {
-        try {
-            return users.values().stream()
-                    .filter(user -> ids.contains(user.getId()))
-                    .collect(Collectors.toList());
-        } catch (NullPointerException | ClassCastException e) {
-            return Collections.emptyList();
-        }
+        return users.values().stream()
+                .filter(user -> ids.contains(user.getId()))
+                .collect(Collectors.toList());
     }
 
     @Override

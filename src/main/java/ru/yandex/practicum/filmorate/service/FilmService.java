@@ -32,25 +32,28 @@ public class FilmService {
 
     public Film createFilm(Film film) {
         if (filmStorage.contain(film.getId())) {
-            log.debug("Попытка повторно создать фильм с id {} ", film.getId());
+            log.info("Попытка повторно создать фильм с id {} ", film.getId());
             throw new ResourceAlreadyExistException("Фильм с таким id=" + film.getId() + " уже существует");
         }
-        if (film.getReleaseDate().isBefore(Film.EARLIEST_DATE))
+        if (film.getReleaseDate().isBefore(Film.EARLIEST_DATE)) {
             throw new ValidationException("Фильм не может иметь дату релиза раньше чем "
                     + Film.EARLIEST_DATE);
+        }
         if (film.getId() == 0)
             film.setId(getNewId());
-        log.debug("Создан фильм с id {}", film.getId());
+        log.info("Создан фильм с id {}", film.getId());
         return filmStorage.create(film);
     }
 
     public Film putFilm(Film film) {
-        if (film.getId() != 0 && !filmStorage.contain(film.getId()))
+        if (film.getId() != 0 && !filmStorage.contain(film.getId())) {
+            log.info("Попытка обновить несуществующий фильм");
             throw new ResourceAlreadyExistException("Попытка обновить несуществующий фильм");
+        }
         if (film.getId() == 0) {
             film.setId(getNewId());
         }
-        log.debug("Добавлен фильм с id {}", film.getId());
+        log.info("Добавлен фильм с id {}", film.getId());
         return filmStorage.put(film);
     }
 
@@ -67,7 +70,7 @@ public class FilmService {
         return Map.of("filmId", id, "userId", userId);
     }
 
-    public Map<String, Long> userRemoveLikeFromFilm(long id, long userId) {
+    public Map<String, Long> userRemoveLikeFromFilm(Long id, Long userId) {
         if (!filmStorage.get(id).removeLike(userId)) {
             throw new ResourceNotExistException(String.format("У фильма id=%d нет лайка юзера id=%d", id, userId));
         }

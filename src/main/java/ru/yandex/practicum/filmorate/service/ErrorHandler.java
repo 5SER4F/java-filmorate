@@ -20,12 +20,12 @@ public class ErrorHandler {
 
     @ExceptionHandler({ResourceNotExistException.class, ResourceAlreadyExistException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleResException(final RuntimeException e) {
+    public ErrorResponse handleResException(final Throwable e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @Data
-    private class ErrorResponse {
+    private static class ErrorResponse {
         private final String error;
     }
 }

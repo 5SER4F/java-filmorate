@@ -11,8 +11,9 @@ import java.util.Set;
 
 @Data
 public class Film {
-    public static final LocalDate EARLIEST_DATE = LocalDate.ofInstant(Instant.ofEpochSecond(-2335564800L), ZoneId.systemDefault());
-    private long id = 0;
+    public static final LocalDate EARLIEST_DATE = LocalDate.ofInstant(Instant.ofEpochSecond(-2_335_564_800L),
+            ZoneId.systemDefault());
+    private long id;
     @NotBlank
     private final String name;
     @NotNull

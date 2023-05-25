@@ -33,13 +33,13 @@ public class UserService {
 
     public User createUser(User user) {
         if (userStorage.contain(user.getId())) {
-            log.debug("Попытка повторно создать пользователя с id {} ", user.getId());
+            log.info("Попытка повторно создать пользователя с id {} ", user.getId());
             throw new ResourceAlreadyExistException("Пользователь с таким id уже существует");
         }
         setEmptyName(user);
         if (user.getId() == 0)
             user.setId(getNewId());
-        log.debug("Создан пользователь с id {}", user.getId());
+        log.info("Создан пользователь с id {}", user.getId());
         userStorage.create(user);
         return user;
     }
@@ -47,19 +47,19 @@ public class UserService {
     public User putUser(User user) {
         setEmptyName(user);
         if (user.getId() != 0 && !userStorage.contain(user.getId())) {
-            log.debug("Попытка обновить несуществующего пользователя");
+            log.info("Попытка обновить несуществующего пользователя");
             throw new ResourceAlreadyExistException("Попытка обновить несуществующего пользователя");
         }
         if (user.getId() == 0)
             user.setId(getNewId());
-        log.debug("Добавлен пользователь с id {}", user.getId());
+        log.info("Добавлен пользователь с id {}", user.getId());
         userStorage.create(user);
         return userStorage.get(user.getId());
     }
 
     public List<User> findAll() {
         List<User> users = userStorage.findAll();
-        log.debug("Общее количество пользователей {}", users.size());
+        log.info("Общее количество пользователей {}", users.size());
         return users;
     }
 

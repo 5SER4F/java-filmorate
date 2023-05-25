@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,9 @@ public class FilmController {
     @PutMapping("/{id}/like/{userId}")
     public Map<String, Long> userLikeFilm(@PathVariable @Positive long id,
                                           @PathVariable @Positive long userId) {
+        if (id <= 0 || userId <= 0) {
+            throw new ValidationException();
+        }
         return filmService.userLikeFilm(id, userId);
     }
 
