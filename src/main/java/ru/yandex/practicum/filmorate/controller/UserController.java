@@ -1,75 +1,69 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ResourceAlreadyExistException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.HashMap;
+import javax.validation.ValidationException;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
-    private static int idCounter = 0;
-    Map<Integer, User> users = new HashMap<>();
+    private final UserService userService;
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getId())) {
-            log.debug("Попытка повторно создать пользователя с id {} ", user.getId());
-            throw new ResourceAlreadyExistException("Пользователь с таким id уже существует");
-        }
-        validation(user);
-        if (user.getId() == 0)
-            user.setId(getNewId());
-        log.debug("Создан пользователь с id {}", user.getId());
-        put(user);
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User putUser(@Valid @RequestBody User user) {
-        validation(user);
-        if (user.getId() != 0 && !users.containsKey(user.getId()))
-            throw new ResourceAlreadyExistException("Попытка обновить несуществующего пользователя");
-        if (user.getId() == 0)
-            user.setId(getNewId());
-        log.debug("Добавлен пользователь с id {}", user.getId());
-        put(user);
-        return users.get(user.getId());
+        return userService.putUser(user);
     }
 
     @GetMapping
     public List<User> findAll() {
-        log.debug("Общее количество пользователей {}", users.size());
-        return users.values().stream()
-                .collect(Collectors.toList());
+        return userService.findAll();
     }
 
-    private void validation(User user) {
-        if (user.getName() == null || user.getName().isBlank())
-            user.setName(user.getLogin());
-        if (user.getBirthday().isAfter(LocalDate.now()))
-            failedValidation("Некорректная дата рождения");
+    @GetMapping("/{id}")
+    public User get(@PathVariable long id) {
+        return userService.get(id);
     }
 
-    private void put(User user) {
-        users.put(user.getId(), user);
+    @PutMapping("/{id}/friends/{friendId}")
+    public Set<Long> addFriend(@PathVariable long id, @PathVariable long friendId) {
+        return userService.addFriend(id, friendId);
     }
 
-    private void failedValidation(String message) {
-        log.debug(message);
-        throw new ValidationException(message);
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public Set<Long> removeFriend(@PathVariable(required = false) Long id,
+                                  @PathVariable(required = false) Long friendId) {
+        if (id == null || friendId == null || id < 1 || friendId < 1)
+            throw new ValidationException(String.format(
+                    "Id должны быть указаны и не быть больше 1 id=%d, otherId=%d ", id, friendId));
+        return userService.removeFriend(id, friendId);
     }
 
-    private static int getNewId() {
-        return ++idCounter;
+    @GetMapping("/{id}/friends")
+    public List<User> findAllFriends(@PathVariable long id) {
+        return userService.findAllFriends(id);
     }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> findOverallFriends(@PathVariable(required = false) Long id,
+                                         @PathVariable(required = false) Long otherId) {
+        if (id == null || otherId == null || id < 1 || otherId < 1)
+            throw new ValidationException(String.format(
+                    "Id должны быть указаны и не быть больше 1 id=%d, otherId=%d ", id, otherId));
+        return userService.findOverallFriends(id, otherId);
+    }
+
 }
