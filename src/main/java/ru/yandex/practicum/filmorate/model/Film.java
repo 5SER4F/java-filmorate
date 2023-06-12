@@ -6,14 +6,13 @@ import javax.validation.constraints.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class Film {
     public static final LocalDate EARLIEST_DATE = LocalDate.ofInstant(Instant.ofEpochSecond(-2_335_564_800L),
             ZoneId.systemDefault());
-    private long id;
+    private Long id;
     @NotBlank
     private final String name;
     @NotNull
@@ -24,14 +23,26 @@ public class Film {
     private final LocalDate releaseDate;
     @Min(1)
     private final long duration;
-    private Set<Long> likes = new HashSet<>();
+    private final Set<Long> likes = new HashSet<>();
+    private List<Genre> genres = Collections.EMPTY_LIST;
+    private RatingMPA mpa;
 
-    public boolean addLike(Long userId) {
-        return likes.add(userId);
+    public Film(Long id, String name, String description, LocalDate releaseDate, long duration, RatingMPA mpa) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
     }
 
-    public boolean removeLike(Long userId) {
-        return likes.remove(userId);
+    public Map<String, Object> toMap() {
+        return Map.of(
+                "name", name,
+                "description", description,
+                "release_date", releaseDate,
+                "duration", duration,
+                "rating_MPA_Id", mpa.getId()
+        );
     }
-
 }

@@ -6,12 +6,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class User {
-    private long id;
+    private Long id;
     @Email
     @NotBlank
     private final String email;
@@ -20,13 +20,20 @@ public class User {
     private String name;
     @Past
     private final LocalDate birthday;
-    private Set<Long> friends = new HashSet<>();
+    private Map<Long, Boolean> friends = new HashMap<>();
 
-    public void addFriend(Long id) {
-        friends.add(id);
+    public User(Long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
     }
 
-    public void removeFriend(Long id) {
-        friends.remove(id);
+    public Map<String, Object> toMap() {
+        return Map.of("email", email,
+                "login", login,
+                "name", name,
+                "birthdate", birthday);
     }
 }

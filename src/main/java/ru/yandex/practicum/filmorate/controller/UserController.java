@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ResourceNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -39,16 +40,22 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public Set<Long> addFriend(@PathVariable long id, @PathVariable long friendId) {
+    public Set<Long> addFriend(@PathVariable(required = false) Long id,
+                               @PathVariable(required = false) Long friendId) {
+        if (id == null || friendId == null || id < 1 || friendId < 1) {
+            throw new ResourceNotExistException(String.format(
+                    "Id должны быть указаны и не быть больше 1 id=%d, otherId=%d ", id, friendId));
+        }
         return userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public Set<Long> removeFriend(@PathVariable(required = false) Long id,
                                   @PathVariable(required = false) Long friendId) {
-        if (id == null || friendId == null || id < 1 || friendId < 1)
-            throw new ValidationException(String.format(
+        if (id == null || friendId == null || id < 1 || friendId < 1) {
+            throw new ResourceNotExistException(String.format(
                     "Id должны быть указаны и не быть больше 1 id=%d, otherId=%d ", id, friendId));
+        }
         return userService.removeFriend(id, friendId);
     }
 
