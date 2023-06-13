@@ -26,7 +26,7 @@ class UserDbStorageTest {
     }
 
     @Test
-    void createGetRemove() {
+    void testCreateGetRemove() {
         assertEquals(user, userStorage.create(user));
 
         user.setId(1L);

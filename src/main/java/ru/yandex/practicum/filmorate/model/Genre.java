@@ -9,6 +9,6 @@ import lombok.Data;
 public class Genre {
 
     private final Long id;
-    String name;
+    private final String name;
 
 }

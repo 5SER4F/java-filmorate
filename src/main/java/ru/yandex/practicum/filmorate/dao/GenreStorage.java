@@ -10,7 +10,7 @@ public interface GenreStorage {
 
     List<Genre> findAll();
 
-    public boolean contain(Long id);
+    boolean contain(Long id);
 
     List<Genre> findAllGenreOfFilm(Long filmId);
 }

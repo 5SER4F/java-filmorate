@@ -20,13 +20,13 @@ public class GenreDbStorage implements GenreStorage {
     public Genre get(Long id) {
         String sqlQuery = "SELECT * FROM genres WHERE id=?";
         return jdbcTemplate.queryForObject(sqlQuery,
-                (rs, rowNum) -> makeGenre(rs), id);
+                this::makeGenre, id);
     }
 
     @Override
     public List<Genre> findAll() {
         String sqlQuery = "SELECT * FROM genres";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeGenre(rs));
+        return jdbcTemplate.query(sqlQuery, this::makeGenre);
     }
 
     @Override
@@ -50,10 +50,10 @@ public class GenreDbStorage implements GenreStorage {
                 "    FROM film_genre AS fg    " +
                 "    WHERE fg.film_id = ?    " +
                 ")";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeGenre(rs), filmId);
+        return jdbcTemplate.query(sqlQuery, this::makeGenre, filmId);
     }
 
-    private Genre makeGenre(ResultSet rs) throws SQLException {
+    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
         return new Genre(rs.getLong("id"),
                 rs.getString("name"));
     }

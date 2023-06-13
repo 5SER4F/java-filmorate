@@ -28,7 +28,7 @@ class FilmDbStorageTest {
     }
 
     @Test
-    void createGetRemove() {
+    void testCreateGetRemove() {
         assertEquals(film, filmDbStorage.create(film));
 
         film.setId(1L);

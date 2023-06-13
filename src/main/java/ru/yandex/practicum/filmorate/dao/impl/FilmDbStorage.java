@@ -68,14 +68,13 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film get(long id) {
         String sqlQuery = "SELECT * FROM films WHERE id=?";
-        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeFilm(rs, rowNum), id);
+        return jdbcTemplate.queryForObject(sqlQuery, this::makeFilm, id);
     }
 
     @Override
     public List<Film> findAll() {
         String sqlQuery = "SELECT * FROM films";
-        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs, rowNum));
-        return films;
+        return jdbcTemplate.query(sqlQuery, this::makeFilm);
     }
 
     @Override
@@ -98,8 +97,7 @@ public class FilmDbStorage implements FilmStorage {
                 "GROUP BY f.ID  " +
                 "ORDER BY pop DESC  " +
                 "LIMIT ?";
-        List<Film> films = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeFilm(rs, rowNum), count);
-        return films;
+        return jdbcTemplate.query(sqlQuery, this::makeFilm, count);
     }
 
     @Override

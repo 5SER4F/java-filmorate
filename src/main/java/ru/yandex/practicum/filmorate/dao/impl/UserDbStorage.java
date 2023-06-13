@@ -66,7 +66,7 @@ public class UserDbStorage implements UserStorage {
             throw new ResourceNotExistException("Id должен быть задан");
         }
         String sqlQuery = "SELECT * FROM users WHERE id=?";
-        User user = jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeUser(rs, rowNum), id);
+        User user = jdbcTemplate.queryForObject(sqlQuery, this::makeUser, id);
         if (user == null) {
             log.debug("Пользователь с id={} не найден", id);
             throw new ResourceNotExistException("Пользователь с id=" + id + " не найден");
@@ -77,16 +77,15 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> findAllFriends(Collection<Long> ids) {
-        List<User> friends = ids.stream()
+        return ids.stream()
                 .map(this::get)
                 .collect(Collectors.toList());
-        return friends;
     }
 
     @Override
     public List<User> findAll() {
         String sqlQuery = "SELECT * FROM users";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs, rowNum));
+        return jdbcTemplate.query(sqlQuery, this::makeUser);
     }
 
     @Override

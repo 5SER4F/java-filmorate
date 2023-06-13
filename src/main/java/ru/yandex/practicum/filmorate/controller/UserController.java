@@ -67,9 +67,10 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> findOverallFriends(@PathVariable(required = false) Long id,
                                          @PathVariable(required = false) Long otherId) {
-        if (id == null || otherId == null || id < 1 || otherId < 1)
+        if (id == null || otherId == null || id < 1 || otherId < 1) {
             throw new ValidationException(String.format(
                     "Id должны быть указаны и не быть больше 1 id=%d, otherId=%d ", id, otherId));
+        }
         return userService.findOverallFriends(id, otherId);
     }
 

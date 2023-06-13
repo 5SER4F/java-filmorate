@@ -24,7 +24,7 @@ public class Film {
     @Min(1)
     private final long duration;
     private final Set<Long> likes = new HashSet<>();
-    private List<Genre> genres = Collections.EMPTY_LIST;
+    private List<Genre> genres = Collections.emptyList();
     private RatingMPA mpa;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, long duration, RatingMPA mpa) {

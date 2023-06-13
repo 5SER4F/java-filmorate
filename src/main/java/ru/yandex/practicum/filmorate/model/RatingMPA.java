@@ -8,6 +8,6 @@ import lombok.Data;
 public class RatingMPA {
 
     private final Long id;
-    String name;
+    private final String name;
 
 }

@@ -21,15 +21,14 @@ public class RatingMPADbStorage implements RatingMPAStorage {
     @Override
     public RatingMPA get(Long id) {
         String sqlQuery = "SELECT * FROM ratings_MPA WHERE id=?";
-        RatingMPA ratingMPA = jdbcTemplate.queryForObject(sqlQuery,
-                (rs, rowNum) -> makeMPA(rs, rowNum), id);
-        return ratingMPA;
+        return jdbcTemplate.queryForObject(sqlQuery,
+                this::makeMPA, id);
     }
 
     @Override
     public List<RatingMPA> findAll() {
         String sqlQuery = "SELECT * FROM ratings_MPA";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeMPA(rs, rowNum));
+        return jdbcTemplate.query(sqlQuery, this::makeMPA);
     }
 
     @Override
