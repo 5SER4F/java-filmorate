@@ -3,11 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ResourceNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class FilmController {
     public Map<String, Long> userLikeFilm(@PathVariable @Positive long id,
                                           @PathVariable @Positive long userId) {
         if (id <= 0 || userId <= 0) {
-            throw new ValidationException();
+            throw new ResourceNotExistException();
         }
         return filmService.userLikeFilm(id, userId);
     }
@@ -51,6 +51,9 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public Map<String, Long> userRemoveLikeFromFilm(@PathVariable @Positive long id,
                                                     @PathVariable @Positive long userId) {
+        if (id <= 0 || userId <= 0) {
+            throw new ResourceNotExistException();
+        }
         return filmService.userRemoveLikeFromFilm(id, userId);
     }
 
